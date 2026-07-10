@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shoulder Program</title>
+<meta name="theme-color" content="#0f172a">
+<meta name="description" content="Right shoulder rehab checklist with session tally">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Shoulder">
+<style>
+  :root{
+    --bg:#0f172a;
+    --card:#1a2540;
+    --card-border:#2a3a5c;
+    --text:#e8edf7;
+    --muted:#8a97b3;
+    --accent:#22d3ee;
+    --accent2:#1e40af;
+    --good:#34d399;
+    --header:#1e40af;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding-bottom:40px;
+    min-height:100vh;
+    overscroll-behavior-y:contain;
+  }
+  .wrap{
+    max-width:520px;
+    margin:0 auto;
+    padding:20px 16px calc(20px + env(safe-area-inset-bottom));
+  }
+  header{
+    padding-top:calc(12px + env(safe-area-inset-top));
+    text-align:center;
+    margin-bottom:14px;
+  }
+  h1{
+    font-size:1.4rem;
+    margin:0 0 2px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .subtitle{
+    color:var(--muted);
+    font-size:0.82rem;
+  }
+  .tally-bar{
+    display:flex;
+    gap:10px;
+    margin:16px 0 20px;
+  }
+  .tally-card{
+    flex:1;
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:14px;
+    padding:12px 8px;
+    text-align:center;
+  }
+  .tally-num{
+    font-size:1.6rem;
+    font-weight:800;
+    color:var(--accent);
+    line-height:1;
+    transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  .tally-num.pop{ transform:scale(1.35); }
+  .tally-label{
+    font-size:0.68rem;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    margin-top:4px;
+  }
+  .progress-wrap{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:14px;
+    padding:12px 14px;
+    margin-bottom:18px;
+  }
+  .progress-top{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.8rem;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  .progress-track{
+    height:10px;
+    background:#0c1428;
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--accent2),var(--accent));
+    border-radius:6px;
+    transition:width .35s ease;
+  }
+  .section{
+    margin-bottom:22px;
+  }
+  .section-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:0.78rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:#a8b6d6;
+    background:var(--header);
+    padding:8px 12px;
+    border-radius:10px;
+    margin-bottom:8px;
+  }
+  .section-note{
+    font-size:0.76rem;
+    color:var(--muted);
+    font-style:italic;
+    margin:0 2px 8px;
+  }
+  .item{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:14px;
+    padding:12px 14px;
+    margin-bottom:8px;
+    cursor:pointer;
+    user-select:none;
+    transition:background .2s ease, border-color .2s ease, transform .12s ease;
+  }
+  .item:active{ transform:scale(0.98); }
+  .item.checked{
+    background:#132a24;
+    border-color:#215a48;
+  }
+  .box{
+    flex:0 0 26px;
+    width:26px;
+    height:26px;
+    border-radius:8px;
+    border:2px solid #445075;
+    margin-top:1px;
+    position:relative;
+    transition:background .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .item.checked .box{
+    background:var(--good);
+    border-color:var(--good);
+  }
+  .box svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    stroke:#0f172a;
+    stroke-width:3;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    fill:none;
+  }
+  .box svg path{
+    stroke-dasharray:24;
+    stroke-dashoffset:24;
+    transition:stroke-dashoffset .28s ease .05s;
+  }
+  .item.checked .box svg path{
+    stroke-dashoffset:0;
+  }
+  .item.pulse{
+    animation:pulse .4s ease;
+  }
+  @keyframes pulse{
+    0%{ transform:scale(1); }
+    35%{ transform:scale(1.03); }
+    100%{ transform:scale(1); }
+  }
+  .item-text{ flex:1; }
+  .item-name{
+    font-weight:600;
+    font-size:0.95rem;
+    margin-bottom:2px;
+  }
+  .item.checked .item-name{
+    color:#9adfc7;
+  }
+  .item-desc{
+    font-size:0.8rem;
+    color:var(--muted);
+    line-height:1.35;
+  }
+  .badge{
+    font-size:0.62rem;
+    background:#0c1428;
+    color:var(--accent);
+    padding:2px 6px;
+    border-radius:6px;
+    margin-left:6px;
+    vertical-align:middle;
+    white-space:nowrap;
+  }
+  .key-rules{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-top:6px;
+  }
+  .key-rules h2{
+    font-size:0.85rem;
+    margin:0 0 8px;
+    color:var(--accent);
+    text-transform:uppercase;
+    letter-spacing:.06em;
+  }
+  .key-rules ul{
+    margin:0;
+    padding-left:18px;
+    font-size:0.8rem;
+    color:var(--muted);
+    line-height:1.5;
+  }
+  .key-rules li{ margin-bottom:6px; }
+  .reset-row{
+    display:flex;
+    justify-content:center;
+    margin-top:22px;
+  }
+  .reset-btn{
+    background:none;
+    border:1px solid var(--card-border);
+    color:var(--muted);
+    font-size:0.78rem;
+    padding:8px 16px;
+    border-radius:10px;
+  }
+  .footer-note{
+    text-align:center;
+    color:#57628a;
+    font-size:0.68rem;
+    margin-top:20px;
+    line-height:1.5;
+  }
+  .confetti-layer{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:50;
+    overflow:hidden;
+  }
+  .confetti-piece{
+    position:absolute;
+    top:-10px;
+    width:8px;
+    height:14px;
+    border-radius:2px;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{ transform:translateY(110vh) rotate(540deg); opacity:0.2; }
+  }
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:26px;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--good);
+    color:#062018;
+    font-weight:700;
+    font-size:0.85rem;
+    padding:12px 20px;
+    border-radius:12px;
+    opacity:0;
+    transition:opacity .3s ease, transform .3s ease;
+    z-index:60;
+    box-shadow:0 8px 24px rgba(0,0,0,.4);
+    text-align:center;
+  }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Right Shoulder Program</h1>
+    <div class="subtitle">Moderate irritability &middot; 3&times; daily</div>
+  </header>
+
+  <div class="tally-bar">
+    <div class="tally-card">
+      <div class="tally-num" id="completedCount">0</div>
+      <div class="tally-label">Sessions Done</div>
+    </div>
+    <div class="tally-card">
+      <div class="tally-num" id="streakCount">0</div>
+      <div class="tally-label">Day Streak</div>
+    </div>
+    <div class="tally-card">
+      <div class="tally-num" id="todayCount">0/3</div>
+      <div class="tally-label">Today</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <span id="progressLabel">0 of 9 done</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Warm-up &mdash; every session</div>
+    <div class="checklist" data-section="warmup">
+      <div class="item" data-id="heat">
+        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
+        <div class="item-text">
+          <div class="item-name">Heat</div>
+          <div class="item-desc">Hot shower or heat pack, ~2 minutes, before you move.</div>
+        </div>
+      </div>
+      <div class="item" data-id="pendulum">
+        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
+        <div class="item-text">
+          <div class="item-name">Pendulum swings</div>
+          <div class="item-desc">Lean forward, let the arm hang, swing 10&ndash;15 small circles each way.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Mobility &mdash; every session</div>
+    <div class="section-note">Each move to the FIRST hint of discomfort. Hold 15&ndash;30 sec, 2&ndash;3 times.</div>
+    <div class="checklist" data-section="mobility">
+      <div class="item" data-id="forward-reach">
+        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
+        <div class="item-text">
+          <div class="item-name">Forward reach</div>
+          <div class="item-desc">Lie on your back; raise the arm overhead with your good hand or a band assisting.</div>
+        </div>
+      </div>
+      <div class="item" data-id="external-rotation">
+        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
+        <div class="item-text">
+          <div class="item-name">External rotation <span class="badge">benchmark</span></div>
+          <div class="item-desc">Elbow tucked at your side, band anchored at waist height; rotate the forearm outward. Have this one measured monthly.</div>
+        </div>
+      </div>
+      <div class="item" data-id="cross-body">
+        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
+        <div class="item-text">
+          <div class="item-name">Cross-body</div>
+          <div class="item-desc">Pull the arm across your chest with the other hand until you feel a firm stretch behind the shoulder.</div>
+        </div>
+      </div>
+      <div class="item" data-id="behind-the-back">
+        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
+        <div class="item-text">
+          <div class="item-name">Behind-the-back</div>
+          <div class="item-desc">Towel over the opposite shoulder; use the good hand to draw the affected hand gently up your spine.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Strength &mdash; once a day only</div>
+    <div class="section-note">Controlled tempo, stay pain-free. 10&ndash;15 reps each.</div>
+    <div class="checklist" data-section="strength">
+      <div class="item" data-id="band-external">
+        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
+        <div class="item-text">
+          <div class="item-name">Band external rotation</div>
+          <div class="item-desc">Elbow at side; rotate forearm out against the band, return slowly.</div>
+        </div>
+      </div>
+      <div class="item" data-id="band-internal">
+        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
+        <div class="item-text">
+          <div class="item-name">Band internal rotation</div>
+          <div class="item-desc">Elbow at side; pull forearm across your stomach against the band, return slowly.</div>
+        </div>
+      </div>
+      <div class="item" data-id="band-row">
+        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
+        <div class="item-text">
+          <div class="item-name">Band row</div>
+          <div class="item-desc">Anchor band in front at chest height; pull elbows back, squeeze shoulder blades, release slowly.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="key-rules">
+    <h2>Key Rules</h2>
+    <ul>
+      <li>Stretch to discomfort, never through sharp or radiating pain.</li>
+      <li>24-hour rule: worse for more than a day, or worse night pain &rarr; ease off next session.</li>
+      <li>Flare-up? Ice 10&ndash;15 min and drop the next session's intensity.</li>
+      <li>Sleep with a pillow supporting the arm so it doesn't hang or get trapped under you.</li>
+      <li>Lifting &amp; chin-ups are fine at controlled tempo &mdash; skip full-speed reps.</li>
+      <li>Re-check your irritability level with your PT every few weeks.</li>
+    </ul>
+  </div>
+
+  <div class="reset-row">
+    <button class="reset-btn" id="resetBtn">Reset today's tally</button>
+  </div>
+
+  <div class="footer-note">
+    Educational summary of your current plan &mdash; not medical advice.<br>
+    Confirm the diagnosis and irritability grade with your physician or PT.
+  </div>
+</div>
+
+<div class="confetti-layer" id="confettiLayer"></div>
+<div class="toast" id="toast">Session complete! 🎉</div>
+
+<script>
+const ITEM_IDS = ['heat','pendulum','forward-reach','external-rotation','cross-body','behind-the-back','band-external','band-internal','band-row'];
+const STORAGE_KEY = 'shoulder-checklist-state-v1';
+
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+}
+
+function loadState(){
+  let s;
+  try{ s = JSON.parse(localStorage.getItem(STORAGE_KEY)); }catch(e){ s = null; }
+  if(!s) s = {};
+  if(!s.checked) s.checked = {};
+  if(typeof s.completedCount !== 'number') s.completedCount = 0;
+  if(typeof s.streak !== 'number') s.streak = 0;
+  if(!s.lastCompletedDate) s.lastCompletedDate = null;
+  if(!s.lastActiveDate) s.lastActiveDate = todayStr();
+  if(typeof s.todayCount !== 'number') s.todayCount = 0;
+  if(s.lastActiveDate !== todayStr()){
+    s.todayCount = 0;
+    s.lastActiveDate = todayStr();
+  }
+  return s;
+}
+
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+let state = loadState();
+
+const itemsEls = ITEM_IDS.map(id => document.querySelector('.item[data-id="'+id+'"]'));
+
+function render(){
+  let checkedCount = 0;
+  itemsEls.forEach((el, i) => {
+    const id = ITEM_IDS[i];
+    const isChecked = !!state.checked[id];
+    el.classList.toggle('checked', isChecked);
+    if(isChecked) checkedCount++;
+  });
+  const total = ITEM_IDS.length;
+  document.getElementById('progressLabel').textContent = checkedCount + ' of ' + total + ' done';
+  document.getElementById('progressPct').textContent = Math.round(checkedCount/total*100) + '%';
+  document.getElementById('progressFill').style.width = (checkedCount/total*100) + '%';
+  document.getElementById('completedCount').textContent = state.completedCount;
+  document.getElementById('streakCount').textContent = state.streak;
+  document.getElementById('todayCount').textContent = state.todayCount + '/3';
+}
+
+function bumpNumber(elId){
+  const el = document.getElementById(elId);
+  el.classList.remove('pop');
+  void el.offsetWidth;
+  el.classList.add('pop');
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 2200);
+}
+
+function fireConfetti(){
+  const layer = document.getElementById('confettiLayer');
+  const colors = ['#22d3ee','#34d399','#1e40af','#facc15','#f472b6'];
+  for(let i=0;i<28;i++){
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.left = Math.random()*100+'vw';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDuration = (1.6 + Math.random()*1.2)+'s';
+    p.style.opacity = 0.85;
+    layer.appendChild(p);
+    setTimeout(()=> p.remove(), 3000);
+  }
+}
+
+function updateStreakOnComplete(){
+  const today = todayStr();
+  if(state.lastCompletedDate !== today){
+    const last = state.lastCompletedDate ? new Date(state.lastCompletedDate) : null;
+    const now = new Date(today);
+    if(last){
+      const diffDays = Math.round((now - last) / 86400000);
+      state.streak = diffDays === 1 ? state.streak + 1 : 1;
+    } else {
+      state.streak = 1;
+    }
+    state.lastCompletedDate = today;
+  }
+}
+
+function handleAllChecked(){
+  state.completedCount += 1;
+  state.todayCount += 1;
+  updateStreakOnComplete();
+  saveState();
+  bumpNumber('completedCount');
+  bumpNumber('streakCount');
+  bumpNumber('todayCount');
+  fireConfetti();
+  showToast('Session complete! Tally: ' + state.completedCount + ' 🎉');
+  setTimeout(()=>{
+    state.checked = {};
+    saveState();
+    render();
+  }, 900);
+}
+
+itemsEls.forEach((el, i) => {
+  el.addEventListener('click', () => {
+    const id = ITEM_IDS[i];
+    state.checked[id] = !state.checked[id];
+    el.classList.add('pulse');
+    setTimeout(()=> el.classList.remove('pulse'), 400);
+    saveState();
+    render();
+    const allChecked = ITEM_IDS.every(itemId => state.checked[itemId]);
+    if(allChecked && state.checked[id]){
+      handleAllChecked();
+    }
+  });
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if(confirm('Reset all checkboxes for this session? Tally totals are kept.')){
+    state.checked = {};
+    saveState();
+    render();
+  }
+});
+
+render();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
