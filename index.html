@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Shoulder Program</title>
-<meta name="theme-color" content="#0f172a">
+<meta name="theme-color" content="#000000">
 <meta name="description" content="Right shoulder rehab checklist with session tally">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
@@ -14,15 +14,15 @@
 <meta name="apple-mobile-web-app-title" content="Shoulder">
 <style>
   :root{
-    --bg:#0f172a;
-    --card:#1a2540;
-    --card-border:#2a3a5c;
-    --text:#e8edf7;
-    --muted:#8a97b3;
-    --accent:#22d3ee;
-    --accent2:#1e40af;
-    --good:#34d399;
-    --header:#1e40af;
+    --bg:#000000;
+    --card:#141414;
+    --card-border:#2b2b2b;
+    --text:#ffffff;
+    --muted:#9a9a9a;
+    --accent:#ff3b3b;
+    --accent2:#8a0000;
+    --good:#ff3b3b;
+    --header:#161616;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;height:100%;}
@@ -82,33 +82,6 @@
     letter-spacing:.05em;
     margin-top:4px;
   }
-  .progress-wrap{
-    background:var(--card);
-    border:1px solid var(--card-border);
-    border-radius:14px;
-    padding:12px 14px;
-    margin-bottom:18px;
-  }
-  .progress-top{
-    display:flex;
-    justify-content:space-between;
-    font-size:0.8rem;
-    color:var(--muted);
-    margin-bottom:8px;
-  }
-  .progress-track{
-    height:10px;
-    background:#0c1428;
-    border-radius:6px;
-    overflow:hidden;
-  }
-  .progress-fill{
-    height:100%;
-    width:0%;
-    background:linear-gradient(90deg,var(--accent2),var(--accent));
-    border-radius:6px;
-    transition:width .35s ease;
-  }
   .section{
     margin-bottom:22px;
   }
@@ -120,8 +93,9 @@
     font-weight:700;
     text-transform:uppercase;
     letter-spacing:.08em;
-    color:#a8b6d6;
+    color:var(--text);
     background:var(--header);
+    border-left:3px solid var(--accent);
     padding:8px 12px;
     border-radius:10px;
     margin-bottom:8px;
@@ -147,15 +121,15 @@
   }
   .item:active{ transform:scale(0.98); }
   .item.checked{
-    background:#132a24;
-    border-color:#215a48;
+    background:#2a0d0d;
+    border-color:var(--accent);
   }
   .box{
     flex:0 0 26px;
     width:26px;
     height:26px;
     border-radius:8px;
-    border:2px solid #445075;
+    border:2px solid #4a4a4a;
     margin-top:1px;
     position:relative;
     transition:background .2s ease, border-color .2s ease, transform .2s ease;
@@ -169,7 +143,7 @@
     inset:0;
     width:100%;
     height:100%;
-    stroke:#0f172a;
+    stroke:#ffffff;
     stroke-width:3;
     stroke-linecap:round;
     stroke-linejoin:round;
@@ -198,51 +172,21 @@
     margin-bottom:2px;
   }
   .item.checked .item-name{
-    color:#9adfc7;
+    color:#ff9d9d;
   }
   .item-desc{
     font-size:0.8rem;
     color:var(--muted);
     line-height:1.35;
   }
-  .badge{
-    font-size:0.62rem;
-    background:#0c1428;
-    color:var(--accent);
-    padding:2px 6px;
-    border-radius:6px;
-    margin-left:6px;
-    vertical-align:middle;
-    white-space:nowrap;
-  }
-  .key-rules{
-    background:var(--card);
-    border:1px solid var(--card-border);
-    border-radius:14px;
-    padding:14px 16px;
-    margin-top:6px;
-  }
-  .key-rules h2{
-    font-size:0.85rem;
-    margin:0 0 8px;
-    color:var(--accent);
-    text-transform:uppercase;
-    letter-spacing:.06em;
-  }
-  .key-rules ul{
-    margin:0;
-    padding-left:18px;
-    font-size:0.8rem;
-    color:var(--muted);
-    line-height:1.5;
-  }
-  .key-rules li{ margin-bottom:6px; }
-  .reset-row{
+  .action-row{
     display:flex;
+    gap:10px;
     justify-content:center;
     margin-top:22px;
+    flex-wrap:wrap;
   }
-  .reset-btn{
+  .action-btn{
     background:none;
     border:1px solid var(--card-border);
     color:var(--muted);
@@ -250,9 +194,13 @@
     padding:8px 16px;
     border-radius:10px;
   }
+  .action-btn.refresh{
+    border-color:var(--accent);
+    color:var(--accent);
+  }
   .footer-note{
     text-align:center;
-    color:#57628a;
+    color:#4a4a4a;
     font-size:0.68rem;
     margin-top:20px;
     line-height:1.5;
@@ -280,8 +228,8 @@
     left:50%;
     bottom:26px;
     transform:translateX(-50%) translateY(20px);
-    background:var(--good);
-    color:#062018;
+    background:var(--accent);
+    color:#ffffff;
     font-weight:700;
     font-size:0.85rem;
     padding:12px 20px;
@@ -289,7 +237,7 @@
     opacity:0;
     transition:opacity .3s ease, transform .3s ease;
     z-index:60;
-    box-shadow:0 8px 24px rgba(0,0,0,.4);
+    box-shadow:0 8px 24px rgba(0,0,0,.6);
     text-align:center;
   }
   .toast.show{
@@ -320,24 +268,9 @@
     </div>
   </div>
 
-  <div class="progress-wrap">
-    <div class="progress-top">
-      <span id="progressLabel">0 of 9 done</span>
-      <span id="progressPct">0%</span>
-    </div>
-    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-  </div>
-
   <div class="section">
     <div class="section-title">Warm-up &mdash; every session</div>
     <div class="checklist" data-section="warmup">
-      <div class="item" data-id="heat">
-        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
-        <div class="item-text">
-          <div class="item-name">Heat</div>
-          <div class="item-desc">Hot shower or heat pack, ~2 minutes, before you move.</div>
-        </div>
-      </div>
       <div class="item" data-id="pendulum">
         <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
         <div class="item-text">
@@ -362,8 +295,8 @@
       <div class="item" data-id="external-rotation">
         <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
         <div class="item-text">
-          <div class="item-name">External rotation <span class="badge">benchmark</span></div>
-          <div class="item-desc">Elbow tucked at your side, band anchored at waist height; rotate the forearm outward. Have this one measured monthly.</div>
+          <div class="item-name">External rotation</div>
+          <div class="item-desc">Elbow tucked at your side, band anchored at waist height; rotate the forearm outward.</div>
         </div>
       </div>
       <div class="item" data-id="cross-body">
@@ -383,48 +316,9 @@
     </div>
   </div>
 
-  <div class="section">
-    <div class="section-title">Strength &mdash; once a day only</div>
-    <div class="section-note">Controlled tempo, stay pain-free. 10&ndash;15 reps each.</div>
-    <div class="checklist" data-section="strength">
-      <div class="item" data-id="band-external">
-        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
-        <div class="item-text">
-          <div class="item-name">Band external rotation</div>
-          <div class="item-desc">Elbow at side; rotate forearm out against the band, return slowly.</div>
-        </div>
-      </div>
-      <div class="item" data-id="band-internal">
-        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
-        <div class="item-text">
-          <div class="item-name">Band internal rotation</div>
-          <div class="item-desc">Elbow at side; pull forearm across your stomach against the band, return slowly.</div>
-        </div>
-      </div>
-      <div class="item" data-id="band-row">
-        <div class="box"><svg viewBox="0 0 26 26"><path d="M6 13l5 5 9-10"/></svg></div>
-        <div class="item-text">
-          <div class="item-name">Band row</div>
-          <div class="item-desc">Anchor band in front at chest height; pull elbows back, squeeze shoulder blades, release slowly.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="key-rules">
-    <h2>Key Rules</h2>
-    <ul>
-      <li>Stretch to discomfort, never through sharp or radiating pain.</li>
-      <li>24-hour rule: worse for more than a day, or worse night pain &rarr; ease off next session.</li>
-      <li>Flare-up? Ice 10&ndash;15 min and drop the next session's intensity.</li>
-      <li>Sleep with a pillow supporting the arm so it doesn't hang or get trapped under you.</li>
-      <li>Lifting &amp; chin-ups are fine at controlled tempo &mdash; skip full-speed reps.</li>
-      <li>Re-check your irritability level with your PT every few weeks.</li>
-    </ul>
-  </div>
-
-  <div class="reset-row">
-    <button class="reset-btn" id="resetBtn">Reset today's tally</button>
+  <div class="action-row">
+    <button class="action-btn refresh" id="hardRefreshBtn">Hard Refresh</button>
+    <button class="action-btn" id="resetBtn">Reset today's tally</button>
   </div>
 
   <div class="footer-note">
@@ -437,7 +331,7 @@
 <div class="toast" id="toast">Session complete! 🎉</div>
 
 <script>
-const ITEM_IDS = ['heat','pendulum','forward-reach','external-rotation','cross-body','behind-the-back','band-external','band-internal','band-row'];
+const ITEM_IDS = ['pendulum','forward-reach','external-rotation','cross-body','behind-the-back'];
 const STORAGE_KEY = 'shoulder-checklist-state-v1';
 
 function todayStr(){
@@ -471,17 +365,11 @@ let state = loadState();
 const itemsEls = ITEM_IDS.map(id => document.querySelector('.item[data-id="'+id+'"]'));
 
 function render(){
-  let checkedCount = 0;
   itemsEls.forEach((el, i) => {
     const id = ITEM_IDS[i];
     const isChecked = !!state.checked[id];
     el.classList.toggle('checked', isChecked);
-    if(isChecked) checkedCount++;
   });
-  const total = ITEM_IDS.length;
-  document.getElementById('progressLabel').textContent = checkedCount + ' of ' + total + ' done';
-  document.getElementById('progressPct').textContent = Math.round(checkedCount/total*100) + '%';
-  document.getElementById('progressFill').style.width = (checkedCount/total*100) + '%';
   document.getElementById('completedCount').textContent = state.completedCount;
   document.getElementById('streakCount').textContent = state.streak;
   document.getElementById('todayCount').textContent = state.todayCount + '/3';
@@ -503,7 +391,7 @@ function showToast(msg){
 
 function fireConfetti(){
   const layer = document.getElementById('confettiLayer');
-  const colors = ['#22d3ee','#34d399','#1e40af','#facc15','#f472b6'];
+  const colors = ['#ff3b3b','#ffffff','#8a0000','#ff9d9d'];
   for(let i=0;i<28;i++){
     const p = document.createElement('div');
     p.className = 'confetti-piece';
@@ -564,11 +452,27 @@ itemsEls.forEach((el, i) => {
 });
 
 document.getElementById('resetBtn').addEventListener('click', () => {
-  if(confirm('Reset all checkboxes for this session? Tally totals are kept.')){
+  if(confirm("Reset all checkboxes for this session? Tally totals are kept.")){
     state.checked = {};
     saveState();
     render();
   }
+});
+
+document.getElementById('hardRefreshBtn').addEventListener('click', async () => {
+  try{
+    if('serviceWorker' in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for(const r of regs) await r.unregister();
+    }
+    if('caches' in window){
+      const keys = await caches.keys();
+      for(const k of keys) await caches.delete(k);
+    }
+  }catch(e){}
+  const url = new URL(window.location.href);
+  url.searchParams.set('_r', Date.now());
+  window.location.href = url.toString();
 });
 
 render();

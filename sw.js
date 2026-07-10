@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shoulder-checklist-v1';
+const CACHE_NAME = 'shoulder-checklist-v2';
 const ASSETS = [
   './',
   './index.html',
